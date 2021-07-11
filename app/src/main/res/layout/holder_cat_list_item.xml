@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -7,39 +10,56 @@
             type="com.thecatapi.cats.CatItemViewModel" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ImageView
+            android:id="@+id/cat_img"
+            android:layout_width="0dp"
+            android:layout_height="128dp"
+            android:background="@color/cardview_dark_background"
+            app:remoteUrl="@{viewModel.url}"
+            app:layout_constraintDimensionRatio="2:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/breed_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp">
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:text="@{viewModel.imageId}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cat_img"
+            tools:text="Toyger"/>
 
-            <ImageView
-                android:id="@+id/cat_img"
-                android:layout_width="0dp"
-                android:layout_height="128dp"
-                app:remoteUrl="@{viewModel.url}"
-                app:layout_constraintDimensionRatio="2:1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/country"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="@+id/breed_name"
+            app:layout_constraintTop_toBottomOf="@+id/breed_name"
+            tools:text="China"/>
 
-            <TextView
-                android:id="@+id/cat_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.id}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cat_img"
-                app:layout_constraintBottom_toBottomOf="parent"
-                tools:text="cat id"/>
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/favorite_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:button="@drawable/checkbox"
+            android:checked="@{viewModel.isFavorite}"
+            app:layout_constraintTop_toBottomOf="@+id/cat_img"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

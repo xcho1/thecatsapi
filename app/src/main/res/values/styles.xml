@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="BreedDropDownStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+        <item name="boxBackgroundColor">@android:color/darker_gray</item>
+        <item name="boxStrokeColor">@android:color/darker_gray</item>
+
+    </style>
+
+    <style name="AutoCompleteTextView" parent="Base.Widget.MaterialComponents.AutoCompleteTextView">
+        <item name="android:editable">false</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>

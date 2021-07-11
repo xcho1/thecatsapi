@@ -9,6 +9,21 @@
     <fragment
         android:id="@+id/catsFragment"
         android:name="com.thecatapi.cats.CatsFragment"
-        tools:layout="@layout/fragment_cats"/>
+        tools:layout="@layout/fragment_cats">
+
+        <action
+            android:id="@+id/action_catsFragment_to_catDetailsFragment"
+            app:destination="@id/catDetailsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/catDetailsFragment"
+        android:name="com.thecatapi.cats.CatDetailsFragment"
+        tools:layout="@layout/fragment_cat_details" >
+        <argument
+            android:name="image_id"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

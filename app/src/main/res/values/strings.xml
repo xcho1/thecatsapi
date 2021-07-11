@@ -3,4 +3,7 @@
     <string name="cats_tab">Cats</string>
     <string name="favorites_tab">Favorites</string>
     <string name="no_favorites_description">Your favorite cats will appear here</string>
+    <string name="label_breeds">Breeds</string>
+    <string name="cancel">cancel</string>
+    <string name="upload">upload</string>
 </resources>

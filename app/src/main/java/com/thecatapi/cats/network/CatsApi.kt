@@ -4,25 +4,41 @@ import com.google.gson.GsonBuilder
 import com.thecatapi.cats.BuildConfig
 import com.thecatapi.cats.model.*
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.io.File
 
 interface CatsApi {
 
-    @GET("images/search?order=ASC&size=small&has_breeds=1")
-    fun searchImages(@Query("page") page: Int, @Query("limit") limit: Int): Single<List<SearchItem>>
+    @GET("breeds")
+    fun getBreeds(): Single<List<Breed>>
 
-    @POST("favorites")
+    @GET("images/search?order=ASC&size=small&has_breeds=1")
+    fun searchImages(@Query("page") page: Int,
+                     @Query("limit") limit: Int,
+                     @Query("breed_id") breedId: String? = null): Single<List<SearchItem>>
+
+    @GET("images/{image_id}?size=full")
+    fun getImage(@Path("image_id") imageId: String): Single<ImageResponse>
+
+    @Multipart
+    @POST("images/upload")
+    fun uploadCatImage(@Part image: MultipartBody.Part, @Part("sub_id") subId: RequestBody): Completable
+
+    @POST("favourites")
     fun addToFavorites(@Body favoriteRequest: FavoriteRequest): Single<FavoriteResponse>
 
-    @GET("favorites")
-    fun getFavorites(): Single<FavoritesResponse>
+    @GET("favourites")
+    fun getFavorites(@Query("sub_id") subId: String): Single<List<Favorite>>
 
-    @DELETE("favorites/{favorite_id}")
-    fun removeFromFavorites(@Path("favorite_id") favoriteId: Int): Single<FavoriteResponse>
+    @DELETE("favourites/{favourite_id}")
+    fun removeFromFavorites(@Path("favourite_id") favoriteId: Int?): Single<FavoriteResponse>
 
     companion object {
 

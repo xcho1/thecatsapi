@@ -4,6 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.thecatapi.cats.model.MainViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -12,7 +18,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/no_favorites_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:goneIf="@{viewModel.noFavorites}">
 
             <TextView
                 android:id="@+id/no_favorites_description"
@@ -31,7 +38,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/favorites_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/holder_favorite_item"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
