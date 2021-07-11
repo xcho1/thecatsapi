@@ -20,6 +20,5 @@ fun loadImage(imageView: ImageView, imageUrl: String?) {
 @Keep
 @BindingAdapter("goneIf")
 fun hideView(view: View, isGone: Boolean) {
-    Timber.e("pizda $isGone")
     view.visibility = if (isGone) View.GONE else View.VISIBLE
 }

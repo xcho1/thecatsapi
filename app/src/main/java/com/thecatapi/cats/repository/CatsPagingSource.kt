@@ -6,6 +6,7 @@ import com.thecatapi.cats.CatItemViewModel
 import com.thecatapi.cats.model.Favorite
 import com.thecatapi.cats.network.CatsApi
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class CatsPagingSource(private val catsApi: CatsApi,
                        private val breedId: String?,
@@ -24,9 +25,8 @@ class CatsPagingSource(private val catsApi: CatsApi,
 
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, CatItemViewModel>> {
         val page = params.key ?: START_PAGE_INDEX
-        return catsApi.searchImages(page, params.loadSize, breedId)
-            .map { items ->
-
+        return catsApi.searchImages(page, params.loadSize, breedId).subscribeOn(Schedulers.io())
+            .map<LoadResult<Int, CatItemViewModel>> { items ->
                 LoadResult.Page(
                     items.map { item ->
                         CatItemViewModel(
@@ -37,6 +37,6 @@ class CatsPagingSource(private val catsApi: CatsApi,
                     if (page == START_PAGE_INDEX) null else page - 1,
                     if (items.isEmpty()) null else page + 1
                 )
-            }
+            }.onErrorReturn { LoadResult.Error(it) }
     }
 }

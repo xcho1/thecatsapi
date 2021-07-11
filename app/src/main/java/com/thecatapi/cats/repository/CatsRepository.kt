@@ -66,11 +66,7 @@ class CatsRepository @Inject constructor(private val catsApi: CatsApi) {
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
-//    val favoritesStream: Single<List<Favorite>> = catsApi.getFavorites()
-//        .subscribeOn(Schedulers.io())
-//        .observeOn(AndroidSchedulers.mainThread()).cache()
-
     fun removeFromFavorites(favoriteId: Int?): Single<FavoriteResponse> = catsApi.removeFromFavorites(favoriteId)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-}//7d3597ab-2904-4531-ac69-9cfb85201a52
+}

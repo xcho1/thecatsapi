@@ -2,21 +2,23 @@ package com.thecatapi.cats
 
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.tabs.TabLayoutMediator
+import com.thecatapi.cats.databinding.DialogImagePreviewBinding
 import com.thecatapi.cats.databinding.FragmentCatsBinding
 import com.thecatapi.cats.model.MainViewModel
 import com.thecatapi.cats.util.FabAnimator
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.io.File
 
 @AndroidEntryPoint
@@ -32,9 +34,12 @@ class CatsFragment : Fragment() {
 
     private var latestTmpUri: Uri? = null
 
-    private val selectImageFromGalleryResult = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {  }
-    }
+    private val selectImageFromGalleryResult =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                showImageUploadDialog(uri)
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,20 +70,21 @@ class CatsFragment : Fragment() {
             adapter.addAll(menuItems)
         })
         binding.autoCompleteTextView.setAdapter(adapter)
-        binding.autoCompleteTextView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            viewModel.loadCats(adapter.getItem(position).breedId).subscribeWith(viewModel.catDataObserver)
-        }
+        binding.autoCompleteTextView.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                viewModel.loadCats(adapter.getItem(position).breedId)
+                    .subscribeWith(viewModel.catDataObserver)
+            }
     }
 
     private fun setupMainFab() {
         binding.fab.setOnClickListener {
             isFabRotated = FabAnimator.rotateFab(it, !isFabRotated)
 
-            Timber.e("pizdec $isFabRotated")
-            if(isFabRotated) {
+            if (isFabRotated) {
                 FabAnimator.showIn(binding.fabUploadFromCamera);
                 FabAnimator.showIn(binding.fabUploadFromFile);
-            } else{
+            } else {
                 FabAnimator.showOut(binding.fabUploadFromCamera);
                 FabAnimator.showOut(binding.fabUploadFromFile);
             }
@@ -103,21 +109,50 @@ class CatsFragment : Fragment() {
 
     private fun selectImageFromGallery() = selectImageFromGalleryResult.launch("image/*")
 
-    private val takeImageResult = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
-        if (isSuccess) {
-            latestTmpUri?.let { uri ->
-//                previewImage.setImageURI(uri)
-                Timber.e("$uri")
+    private val takeImageResult =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
+            if (isSuccess) {
+                latestTmpUri?.let { uri ->
+                    showImageUploadDialog(uri)
+                }
             }
         }
-    }
 
     private fun getTmpFileUri(): Uri {
-        val tmpFile = File.createTempFile("tmp_image_file", ".jpg", requireActivity().cacheDir).apply {
-            createNewFile()
-            deleteOnExit()
+        val tmpFile =
+            File.createTempFile("tmp_image_file", ".jpg", requireActivity().cacheDir).apply {
+                createNewFile()
+                deleteOnExit()
+            }
+
+        return FileProvider.getUriForFile(
+            requireContext().applicationContext,
+            "${BuildConfig.APPLICATION_ID}.provider",
+            tmpFile
+        )
+    }
+
+    private fun showImageUploadDialog(imageUri: Uri) {
+        val dialogBinding = DataBindingUtil.inflate<DialogImagePreviewBinding>(
+            layoutInflater,
+            R.layout.dialog_image_preview, null, false
+        )
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogBinding.root)
+            .show()
+
+        val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, imageUri)
+
+        dialogBinding.imagePreview.setImageBitmap(bitmap)
+
+        dialogBinding.cancelButton.setOnClickListener {
+            dialog.cancel()
         }
 
-        return FileProvider.getUriForFile(requireContext().applicationContext, "${BuildConfig.APPLICATION_ID}.provider", tmpFile)
+        dialogBinding.uploadButton.setOnClickListener {
+
+            viewModel.uploadImage(imageUri)
+        }
     }
 }
