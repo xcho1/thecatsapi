@@ -12,23 +12,20 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.util.UUID
 import javax.inject.Inject
 
-class CatsRepository @Inject constructor(private val catsApi: CatsApi) {
+class CatsRepository @Inject constructor(private val catsApi: CatsApi,
+                                         userPreferences: UserStorage) {
 
     companion object {
         private const val DEFAULT_PAGE_SIZE = 20
-//        private val SUB_ID = UUID.randomUUID().toString()
     }
+
+    private val subId = userPreferences.subId()
 
     private val pagingConfig = PagingConfig(DEFAULT_PAGE_SIZE, enablePlaceholders = false)
 
@@ -48,25 +45,29 @@ class CatsRepository @Inject constructor(private val catsApi: CatsApi) {
         .observeOn(AndroidSchedulers.mainThread())
 
     fun uploadImage(imageFile: File): Completable {
-        val body = MultipartBody.Part.createFormData("file",
-            imageFile.name,
-            imageFile.asRequestBody("multipart/form-data".toMediaTypeOrNull()))
-        val subId = "xcho".toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
-        return catsApi.uploadCatImage(body, subId)
+        val body = MultipartBody.Builder()
+            .addFormDataPart(
+                "file",
+                imageFile.name,
+                imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+            ).addFormDataPart("subId", subId)
+            .build().part(0)
+
+        return catsApi.uploadCatImage(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun addToFavorites(imageId: String): Single<FavoriteResponse> = catsApi.addToFavorites(FavoriteRequest(imageId, "xcho"))
+    fun addToFavorites(imageId: String): Single<FavoriteResponse> = catsApi.addToFavorites(FavoriteRequest(imageId, subId))
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
-    fun getFavorites(): Single<List<Favorite>> = catsApi.getFavorites("xcho")
+    fun getFavorites(): Single<List<Favorite>> = catsApi.getFavorites(subId)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 
-    fun removeFromFavorites(favoriteId: Int?): Single<FavoriteResponse> = catsApi.removeFromFavorites(favoriteId)
+    fun removeFromFavorites(favoriteId: Int?): Completable = catsApi.removeFromFavorites(favoriteId)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
 }

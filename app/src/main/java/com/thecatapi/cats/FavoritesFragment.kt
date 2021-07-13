@@ -10,12 +10,12 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.thecatapi.cats.databinding.FragmentFavoritesBinding
 import com.thecatapi.cats.model.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -25,7 +25,15 @@ class FavoritesFragment : Fragment() {
 
     private lateinit var binding: FragmentFavoritesBinding
 
-    private val adapter = FavoritesAdapter()
+    private val compositeDisposable = CompositeDisposable()
+
+    private val favoritesListener = object: (Int, FavoriteItemViewModel) -> Unit {
+        override fun invoke(position: Int, catItem: FavoriteItemViewModel) {
+            viewModel.removeFromFavorites(catItem.favoriteId, position)
+        }
+    }
+
+    private val adapter = FavoritesAdapter(favoritesListener)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,9 +51,9 @@ class FavoritesFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadFavorites()
+        compositeDisposable.add(viewModel.loadFavorites().subscribe({},{ Timber.e(it)}))
         viewModel.favoritesLiveData.observe(this, {
-            adapter.addAll(it)
+            adapter.submitList(it)
         })
     }
 

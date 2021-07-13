@@ -3,7 +3,14 @@
     <string name="cats_tab">Cats</string>
     <string name="favorites_tab">Favorites</string>
     <string name="no_favorites_description">Your favorite cats will appear here</string>
-    <string name="label_breeds">Breeds</string>
+    <string name="label_breeds">All breeds</string>
     <string name="cancel">cancel</string>
     <string name="upload">upload</string>
+    <string name="dash">-</string>
+    <string name="label_dog_friendly">Dog friendly</string>
+    <string name="min_value">1</string>
+    <string name="max_value">5</string>
+    <string name="label_child_friendly">Child friendly</string>
+    <string name="upload_success">Image uploaded successfully</string>
+    <string name="upload_failure">Failed to upload image, make sure it is a cat</string>
 </resources>

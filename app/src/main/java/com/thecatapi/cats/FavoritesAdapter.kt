@@ -4,11 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.ListAdapter
+import com.thecatapi.cats.databinding.HolderFavoriteItemBinding
 
-class FavoritesAdapter : Adapter<BindingHolder>() {
-
-    private val favorites = mutableListOf<ListItemViewModel>()
+class FavoritesAdapter(private val favoriteListener: (Int, FavoriteItemViewModel) -> Unit) : ListAdapter<FavoriteItemViewModel, BindingHolder>(DiffUtilCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingHolder {
         val binding = DataBindingUtil.inflate<ViewDataBinding>(
@@ -20,16 +19,13 @@ class FavoritesAdapter : Adapter<BindingHolder>() {
     }
 
     override fun onBindViewHolder(holder: BindingHolder, position: Int) {
-        holder.bind(favorites[position])
+        holder.bind(getItem(position))
+        (holder.binding as HolderFavoriteItemBinding).favoriteCheckbox.isChecked = true
+        (holder.binding as HolderFavoriteItemBinding)
+            .favoriteCheckbox.setOnClickListener {
+                favoriteListener(position, getItem(position))
+            }
     }
 
-    override fun getItemViewType(position: Int) = favorites[position].layoutId
-
-    fun addAll(list: List<ListItemViewModel>) {
-        favorites.clear()
-        favorites.addAll(list)
-        notifyDataSetChanged()
-    }
-
-    override fun getItemCount() = favorites.size
+    override fun getItemViewType(position: Int) = getItem(position).layoutId
 }

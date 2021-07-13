@@ -7,6 +7,7 @@ import com.thecatapi.cats.model.Favorite
 import com.thecatapi.cats.network.CatsApi
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import timber.log.Timber
 
 class CatsPagingSource(private val catsApi: CatsApi,
                        private val breedId: String?,
@@ -32,7 +33,8 @@ class CatsPagingSource(private val catsApi: CatsApi,
                         CatItemViewModel(
                             item.id!!,
                             favorites?.find { fav -> fav.imageId == item.id }?.id,
-                            item.url
+                            item.url,
+                            if (item.breeds.isEmpty()) null else item.breeds[0]
                         ) },
                     if (page == START_PAGE_INDEX) null else page - 1,
                     if (items.isEmpty()) null else page + 1

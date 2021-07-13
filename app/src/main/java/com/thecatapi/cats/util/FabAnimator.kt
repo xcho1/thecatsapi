@@ -49,10 +49,4 @@ object FabAnimator {
             }).alpha(0f)
             .start()
     }
-
-    fun init(v: View) {
-        v.visibility = View.GONE
-        v.translationY = v.height.toFloat()
-        v.alpha = 0f
-    }
 }

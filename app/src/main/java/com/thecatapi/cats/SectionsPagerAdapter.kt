@@ -5,7 +5,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class SectionsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-
     companion object {
         private const val CAT_LIST_FRAGMENT_POSITION = 0
         private const val FAVORITES_FRAGMENT_POSITION = 1
@@ -18,6 +17,8 @@ class SectionsPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
         FAVORITES_FRAGMENT_POSITION -> FavoritesFragment()
         else -> Fragment()
     }
+
+
 
 //    override fun getItem(position: Int): Fragment {
 //        // getItem is called to instantiate the fragment for the given page.

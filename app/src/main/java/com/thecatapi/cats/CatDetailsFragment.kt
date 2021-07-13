@@ -10,6 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.thecatapi.cats.databinding.FragmentCatDetailsBinding
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import timber.log.Timber
 
 @AndroidEntryPoint
 class CatDetailsFragment : Fragment() {
@@ -19,6 +21,10 @@ class CatDetailsFragment : Fragment() {
     private lateinit var binding: FragmentCatDetailsBinding
 
     private val viewModel: CatDetailsViewModel by viewModels()
+
+    private val compositeDisposable = CompositeDisposable()
+
+    private var favoriteId: Int? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,6 +38,32 @@ class CatDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.loadCatDetails(args.imageId)
+
+        compositeDisposable.add(viewModel.loadCatDetails(args.imageId).subscribe({}, {Timber.e(it)}))
+
+        binding.favoriteCheckbox.isChecked = args.favoriteId != -1
+
+        favoriteId = args.favoriteId
+
+        binding.favoriteCheckbox.setOnClickListener {
+            if (binding.favoriteCheckbox.isChecked) {
+                compositeDisposable.add(viewModel.addToFavorites(args.imageId)
+                    .subscribe({ favoriteId = it.id }, { Timber.e(it) }))
+            } else {
+                compositeDisposable.add(viewModel.removeFromFavorites(favoriteId)
+                    .subscribe({ favoriteId = null }, { Timber.e(it) }))
+            }
+        }
+
+        binding.breedName.text = args.breed?.name
+        binding.description.text = args.breed?.description
+        binding.country.text = args.breed?.countryCode
+        binding.dogFriendlyIndicator.indicatorBar.progress = args.breed?.dogFriendly ?: 1
+        binding.childFriendlyIndicator.indicatorBar.progress = args.breed?.dogFriendly ?: 1
+    }
+
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
     }
 }

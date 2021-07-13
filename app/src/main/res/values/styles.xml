@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="BreedDropDownStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
-        <item name="boxBackgroundColor">@android:color/darker_gray</item>
+    <style name="BreedDropDownStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxBackgroundColor">@color/cardview_dark_background</item>
         <item name="boxStrokeColor">@android:color/darker_gray</item>
-
+        <item name="endIconTint">@android:color/darker_gray</item>
     </style>
 
     <style name="AutoCompleteTextView" parent="Base.Widget.MaterialComponents.AutoCompleteTextView">

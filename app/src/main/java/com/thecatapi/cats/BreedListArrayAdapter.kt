@@ -16,9 +16,16 @@ class BreedListArrayAdapter(context: Context) : ArrayAdapter<BreedDropDownMenuIt
 
     override fun getCount() = items.size
 
+    override fun add(item: BreedDropDownMenuItem?) {
+        items.add(item!!)
+    }
+
     override fun addAll(collection: Collection<BreedDropDownMenuItem>) {
-        items.clear()
         items.addAll(collection)
+    }
+
+    override fun clear() {
+        super.clear()
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

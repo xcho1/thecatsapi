@@ -1,7 +1,10 @@
 package com.thecatapi.cats.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Breed(@SerializedName("weight") val weight: Weight,
                  @SerializedName("id") val id: String,
                  @SerializedName("name") val name: String,
@@ -16,4 +19,4 @@ data class Breed(@SerializedName("weight") val weight: Weight,
                  @SerializedName("life_span") val lifeSpan: String,
                  @SerializedName("indoor") val indoor: Int,
                  @SerializedName("child_friendly") val childFriendly: Int,
-                 @SerializedName("dog_friendly") val dogFriendly: Int)
+                 @SerializedName("dog_friendly") val dogFriendly: Int) : Parcelable

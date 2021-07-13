@@ -48,7 +48,7 @@
             app:layout_constraintTop_toBottomOf="@+id/breed_name"
             tools:text="China"/>
 
-        <com.google.android.material.checkbox.MaterialCheckBox
+        <CheckBox
             android:id="@+id/favorite_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,7 +56,11 @@
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:button="@drawable/checkbox"
+            android:textOn=""
+            android:textOff=""
             android:checked="@{viewModel.isFavorite}"
+            android:clickable="@{viewModel.isFavoriteEnabled()}"
+            android:buttonTint="@color/pink"
             app:layout_constraintTop_toBottomOf="@+id/cat_img"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

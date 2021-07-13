@@ -24,6 +24,14 @@
         <argument
             android:name="image_id"
             app:argType="string" />
+        <argument
+            android:name="favorite_id"
+            android:defaultValue="-1"
+            app:argType="integer" />
+        <argument
+            android:name="breed"
+            app:argType="com.thecatapi.cats.model.Breed"
+            app:nullable="true"/>
     </fragment>
 
 </navigation>

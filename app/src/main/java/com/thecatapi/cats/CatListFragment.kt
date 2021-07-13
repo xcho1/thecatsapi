@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.thecatapi.cats.databinding.FragmentCatListBinding
 import com.thecatapi.cats.model.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,19 +26,20 @@ class CatListFragment : Fragment() {
 
     private lateinit var binding: FragmentCatListBinding
 
-    private val itemClickHandler = object: (String) -> Unit {
-        override fun invoke(imageId: String) {
-            val action = CatsFragmentDirections.actionCatsFragmentToCatDetailsFragment(imageId)
+    private val itemClickHandler = object: (CatItemViewModel) -> Unit {
+        override fun invoke(catItem: CatItemViewModel) {
+            val action = CatsFragmentDirections.actionCatsFragmentToCatDetailsFragment(catItem.imageId,
+                catItem.favoriteId ?: -1, catItem.breed)
             parentFragment?.findNavController()?.navigate(action)
         }
     }
 
-    private val favoriteListener = object: (String, Int?, Boolean) -> Unit {
-        override fun invoke(imageId: String, favoriteID: Int?, isChecked: Boolean) {
-            if (isChecked) {
-                viewModel.addToFavorites(imageId)
+    private val favoriteListener = object: (Int, CatItemViewModel) -> Unit {
+        override fun invoke(position: Int, catItem: CatItemViewModel) {
+            if (!catItem.isFavorite.get()) {
+                viewModel.addToFavorites(catItem.imageId, position)
             } else {
-                viewModel.removeFromFavorites(favoriteID)
+                viewModel.removeFromFavorites(catItem.favoriteId, position)
             }
         }
     }
@@ -61,11 +63,14 @@ class CatListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadCatsWithFavorites().subscribeWith(viewModel.catDataObserver)
+        (parentFragment as CatsFragment).performDropDownClick()
         viewModel.catsLiveData.observe(this, {
             GlobalScope.launch(Dispatchers.IO) {
                 adapter.submitData(it)
             }
+        })
+        viewModel.favoriteResultLiveData.observe(this, {
+            adapter.updateItemState(it.first, it.second)
         })
     }
 
@@ -88,5 +93,6 @@ class CatListFragment : Fragment() {
             }
         }.apply { setDrawable(drawable!!) }
         binding.catsRecyclerView.addItemDecoration(dividerItemDecoration)
+        (binding.catsRecyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
     }
 }

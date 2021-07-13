@@ -8,7 +8,6 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
@@ -28,7 +27,7 @@ interface CatsApi {
 
     @Multipart
     @POST("images/upload")
-    fun uploadCatImage(@Part image: MultipartBody.Part, @Part("sub_id") subId: RequestBody): Completable
+    fun uploadCatImage(@Part image: MultipartBody.Part): Completable
 
     @POST("favourites")
     fun addToFavorites(@Body favoriteRequest: FavoriteRequest): Single<FavoriteResponse>
@@ -37,7 +36,7 @@ interface CatsApi {
     fun getFavorites(@Query("sub_id") subId: String): Single<List<Favorite>>
 
     @DELETE("favourites/{favourite_id}")
-    fun removeFromFavorites(@Path("favourite_id") favoriteId: Int?): Single<FavoriteResponse>
+    fun removeFromFavorites(@Path("favourite_id") favoriteId: Int?): Completable
 
     companion object {
 

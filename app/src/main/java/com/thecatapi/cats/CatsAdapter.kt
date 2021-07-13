@@ -8,8 +8,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.thecatapi.cats.databinding.HolderCatListItemBinding
 
-class CatsAdapter(private val clickHandler: (String) -> Unit,
-                  private val favoriteListener: (String, Int?, Boolean) -> Unit) : PagingDataAdapter<CatItemViewModel, BindingHolder>(diffUtilCallback) {
+class CatsAdapter(private val clickHandler: (CatItemViewModel) -> Unit,
+                  private val favoriteListener: (Int, CatItemViewModel) -> Unit) : PagingDataAdapter<CatItemViewModel, BindingHolder>(diffUtilCallback) {
 
     companion object {
 
@@ -27,13 +27,20 @@ class CatsAdapter(private val clickHandler: (String) -> Unit,
     override fun onBindViewHolder(holder: BindingHolder, position: Int) {
         getItem(position)?.let { holder.bind(it) }
         holder.itemView.setOnClickListener {
-            clickHandler.invoke(getItem(position)!!.imageId)
+            clickHandler.invoke(getItem(position)!!)
         }
         (holder.binding as HolderCatListItemBinding)
-            .favoriteCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                favoriteListener.invoke(getItem(position)!!.imageId, getItem(position)!!.favoriteId, isChecked)
+            .favoriteCheckbox.setOnClickListener {
+                getItem(position)!!.isFavoriteEnabled.set(false)
+                favoriteListener.invoke(position, getItem(position)!!)
             }
-//        getItem(position)?.listener = favoriteListener
+        getItem(position)!!.isFavorite.set(getItem(position)?.favoriteId != null)
+    }
+
+    fun updateItemState(position: Int, favoriteId: Int?) {
+        getItem(position)!!.isFavoriteEnabled.set(true)
+        getItem(position)?.favoriteId = favoriteId
+        notifyItemChanged(position)
     }
 
     override fun getItemViewType(position: Int): Int {

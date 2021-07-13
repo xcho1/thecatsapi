@@ -29,7 +29,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:remoteUrl="@{viewModel.url}"/>
 
-            <com.google.android.material.checkbox.MaterialCheckBox
+            <CheckBox
                 android:id="@+id/favorite_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -38,7 +38,10 @@
                 android:minWidth="0dp"
                 android:minHeight="0dp"
                 android:button="@drawable/checkbox"
-                app:buttonTint="@color/black"
+                android:textOn=""
+                android:textOff=""
+                android:clickable="@{viewModel.isFavoriteClickable()}"
+                android:buttonTint="@color/pink"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -55,6 +58,28 @@
                 tools:text="Bengal"/>
 
             <TextView
+                android:id="@+id/dash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:text="@string/dash"
+                app:layout_constraintStart_toEndOf="@+id/breed_name"
+                app:layout_constraintTop_toTopOf="@+id/breed_name"/>
+
+            <TextView
+                android:id="@+id/country"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                app:layout_constraintStart_toEndOf="@id/dash"
+                app:layout_constraintTop_toTopOf="@+id/dash"
+                tools:text="country"/>
+
+            <TextView
                 android:id="@+id/description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -65,6 +90,44 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/breed_name"
                 tools:text="Bengals are a lot of fun to live with, but they're definitely not the cat for everyone, or for first-time cat owners. Extremely intelligent, curious and active, they demand a lot of interaction and woe betide the owner who doesn't provide it."/>
+
+
+            <TextView
+                android:id="@+id/label_dog_friendly"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="@string/label_dog_friendly"
+                app:layout_constraintStart_toStartOf="@+id/description"
+                app:layout_constraintTop_toBottomOf="@+id/description"/>
+
+            <include
+                android:id="@+id/dog_friendly_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/level_indicator"
+                app:layout_constraintTop_toBottomOf="@+id/label_dog_friendly"/>
+
+            <TextView
+                android:id="@+id/label_child_friendly"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="@string/label_child_friendly"
+                app:layout_constraintStart_toStartOf="@+id/description"
+                app:layout_constraintTop_toBottomOf="@+id/dog_friendly_indicator"/>
+
+            <include
+                android:id="@+id/child_friendly_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/level_indicator"
+                app:layout_constraintTop_toBottomOf="@+id/label_child_friendly"/>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
